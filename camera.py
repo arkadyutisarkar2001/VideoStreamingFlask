@@ -1,5 +1,5 @@
 import cv2
-face_cascade=cv2.CascadeClassifier("haarcascade_frontalface_alt2.xml")
+face_cascade=cv2.CascadeClassifier("/var/www/html/earthrover/VideoStreamingFlask/haarcascade_frontalface_alt2.xml")
 ds_factor=0.6
 
 class VideoCamera(object):
