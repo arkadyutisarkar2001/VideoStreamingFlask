@@ -16,10 +16,11 @@
         }
         .flex-container{
             display:flex;
+            border:10px;
 
         }
 
-        img {
+        img {   
   	display: flex;
   	/* margin-left: auto;
   	margin-right: auto; */
@@ -27,6 +28,44 @@
 	width:50%;
     height:auto;
 	} 
+    
+
+.jumbotron{
+    widows: 50px;
+    height: 80px;
+    justify-content: center;
+}
+
+.row{
+    justify-content: left;
+}
+.led-red {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  background-color: #F00;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #441313 0 -1px 9px, rgba(255, 0, 0, 0.5) 0 2px 12px;
+  -webkit-animation: blinkRed 0.5s infinite;
+  -moz-animation: blinkRed 0.5s infinite;
+  -ms-animation: blinkRed 0.5s infinite;
+  -o-animation: blinkRed 0.5s infinite;
+  animation: blinkRed 0.5s infinite;
+}
+.led-green {
+  margin: 0 auto;
+  width: 24px;
+  height: 24px;
+  background-color: #05963c;
+  border-radius: 50%;
+  box-shadow: rgba(0, 0, 0, 0.2) 0 -1px 7px 1px, inset #304701 0 -1px 9px, #89FF00 0 2px 12px;
+}
+.led-box {
+  height: 30px;
+  width: 25%;
+  margin: 10px 0;
+  float: left;
+}
     </style>
 </head>
 <meta charset="UTF-8">
@@ -35,17 +74,52 @@
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <title>Sensor Data Chart</title>
 
-<body>
- <div style="width: auto;">
-    <div id="warning" class="alert alert-primary" role="alert" style="display:none">
-        Data Logging System Has Problem!
-    </div>
+<body style="background-color: transparent;">
+
     <div class="flex-container">
 
         <img id="bg" class="left" src="{{ url_for('video_feed') }}">
         <div style="width:49%;height:auto;">
-        <div  style="height:200px">
+        <!-- <div  style="height:200px">
             <canvas id="sensor-chart"></canvas>
+        </div> -->
+        
+
+        <div class="container-fluid">
+
+            <div class="row ml-1">
+    
+                <div class="col-4 jumbotron p-1 mx-1">
+                    <h4 class="sensor1"> Humidity: </h4>
+                    <h4 class="sensor3">Temparature:</h4>
+                </div>
+            
+    <br>
+                <div class="col-4 jumbotron p-1 mx-1">
+                    <h4 class="sensor2">CPM:</h4>
+                    <h4 class="sensor4">nSv :</h4>
+                </div>
+                <br>
+                <div class="col-4 jumbotron p-1 mx-1">
+                    <h4 class="sensor5">Sensor :</h4>
+                    <h4 class="sensor6">Sensor :</h4>
+                </div>
+                <br>
+                <div class="col-4 jumbotron p-1 mx-1">
+                    <h4 class="sensor7">Data aqusition:</h4>
+                    <div>
+                    <div class="led-box ml-5">
+                        <div class="led-green"></div>
+                      </div>
+                    <div class="led-box ml-5">
+                        <div class="led-red"></div>
+                      </div>
+                    </div>
+                </div>
+                
+               
+            
+            </div>
         </div>
         <div id="map"></div>
     </div>
@@ -53,6 +127,49 @@
 </div>
 </body>
 <script>
+    $(document).ready(function () {
+
+      
+        setInterval(function () {
+            $.ajax({
+                type: 'POST',
+                url: '{{ url_for("data") }}',
+                success: function (response) {
+                    console.log(response);
+                    $(".sensor1").text("");
+                     $(".sensor1").text("Humidity : " +  Math.round(response.humidity) );
+
+                    $(".sensor2").text("");
+                     $(".sensor2").text("CPM : " +  Math.round(response.cpm) );
+
+                    $(".sensor3").text("");
+                    $(".sensor3").text("Temparature : " +  Math.round(response.temparature) );
+
+                    $(".sensor4").text("");
+                    $(".sensor4").text("nSV : " +  Math.round(response.nSv) );
+
+                    $(".sensor5").text("");
+                    $(".sensor5").text("H2S: " +  Math.round(response.avg_h2s) );
+                    $(".sensor6").text("");
+                    $(".sensor6").text("CO: " +  Math.round(response.avg_co) );
+                    // $(".sensor7").text("");
+                    // $(".sensor7").text("Altitude: " +  Math.round(response.alt) );
+                    
+                    if (response.status == true) {
+                        $(".led-green").show();
+                        $(".led-red").hide();
+                    }
+                    else {
+                        $(".led-red").show();
+                        $(".led-green").hide();
+                    }
+                    
+             }
+            });
+        }, 1000);
+    });
+</script>
+<!-- <script>
     $(document).ready(function () {
 
         var ctx = $('#sensor-chart');
@@ -72,6 +189,12 @@
                     data: [],
                     backgroundColor: 'rgba(255, 99, 132, 0.2)',
                     borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 3
+                },{
+                    label: 'CPM',
+                    data: [],
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 100, 255, 1)',
                     borderWidth: 3
                 }]
             },
@@ -101,6 +224,11 @@
                 url: '{{ url_for("data") }}',
                 success: function (response) {
                     console.log(response);
+                    $(".sensor1").text("");
+                     $(".sensor1").text("Temperature : " +  Math.round(response.humidity) );
+
+                    $(".sensor2").text("");
+                     $(".sensor2").text("CPM : " +  Math.round(response.cpm) );
                     if (response.status == true) {
                         $("#warning").show();
                     }
@@ -112,6 +240,7 @@
                         chart.data.labels.push(now.toLocaleTimeString());
                         chart.data.datasets[0].data.push(response.humidity);
                         chart.data.datasets[1].data.push(response.temparature);
+                        chart.data.datasets[2].data.push(response.cpm);
                         if (chart.data.labels.length > 11) {
                             chart.data.labels.shift();
                             chart.data.datasets[0].data.shift();
@@ -127,7 +256,7 @@
             });
         }, 1000);
     });
-</script>
+</script> -->
 
 
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -139,7 +268,7 @@
     // Add a tile layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
-        maxZoom: 70
+        maxZoom: 40
     }).addTo(mymap);
     var locations = [];
     // Create a marker at the Raspberry Pi location

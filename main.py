@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 import serial,time ,random
 import json
 app = Flask(__name__)
-ser = serial.Serial('/dev/ttyACM1',115200,timeout=4)
+ser = serial.Serial('/dev/ttyACM0',115200,timeout=4)
 value1=0
 value2=0
 
@@ -33,29 +33,37 @@ def data():
         led=True
     else:
             led=False 
+    global lat,long,temparature,humidity,prevhu,prevt,prevlat,prevlong,prevcpm,prevnSv,nSv        
     if ser.in_waiting > 0:
         global jsonData
-        global lat,long,temparature,humidity,prevh,prevt,prevlat,prevlong
+        
         jsonString = ser.readline().decode('utf-8').rstrip()
 
         try:
             jsonData = json.loads(jsonString)
         except json.decoder.JSONDecodeError:
                 print("Failed to parse JSON")
-        humidity = jsonData["cpmb "]
+        humidity = jsonData["humidity"]
         temparature = jsonData["temparature"]
         lat=jsonData["lat"]
         long=jsonData["long"]
+        cpm=jsonData["cpm"]
+        nSv=jsonData["nSv"]
+        avg_h2s=jsonData["average_of_h2s"]
+        avg_co=jsonData[" average_of_co "]
+        alt=jsonData["alt"]
         prevlat =lat
         prevlong=long
-        prevh= humidity
+        prevhu= humidity
         prevt= temparature
+        prevcpm=cpm
+        prevnSv=nSv
     # store the variable and process it further as needed
         print(f"humidity: { humidity}, temparature: {temparature},lat:{lat},long:{long}")
         print (temparature) 
-        return jsonify({'humidity':humidity,'temparature':temparature,'lat':lat,'long':long,'status':led})
+        return jsonify({'humidity':humidity,'temparature':temparature,'lat':lat,'long':long,'cpm':cpm,'nSv':nSv,'avg_h2s':avg_h2s,'avg_co':avg_co,'alt':alt,'status':led})
     else:
-          print(f"humidity::{prevh},temparature:{prevt},lat:{prevlat},long:{prevlong}")
-          return jsonify({'humidity':prevh,'temparature':prevt,'lat':prevlat,'long':prevlong,'status':'false'})
+        print(f"humidity::{prevhu},temparature:{prevt},lat:{prevlat},long:{prevlong}")
+        return jsonify({'humidity':prevhu,'temparature':prevt,'lat':prevlat,'long':prevlong,'cpm':prevcpm,'nSv':prevnSv,'avg_h2s':0,'avg_co':0,'alt':0,'status':'false'})
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port='5000',debug=True)
