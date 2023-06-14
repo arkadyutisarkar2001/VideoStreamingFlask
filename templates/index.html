@@ -25,8 +25,8 @@
   	/* margin-left: auto;
   	margin-right: auto; */
     aspect-ratio:16px/9px ;
-	width:50%;
-    height:auto;
+	width:55%;
+    /* height:auto; */
 	} 
     
 
@@ -74,12 +74,12 @@
     integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 <title>Sensor Data Chart</title>
 
-<body style="background-color: transparent;">
+<body class="flex-container" style="background-color: transparent;">
 
-    <div class="flex-container">
+    <!-- <div class="flex-container"> -->
 
         <img id="bg" class="left" src="{{ url_for('video_feed') }}">
-        <div style="width:49%;height:auto;">
+        <div>
         <!-- <div  style="height:200px">
             <canvas id="sensor-chart"></canvas>
         </div> -->
@@ -87,27 +87,25 @@
 
         <div class="container-fluid">
 
-            <div class="row ml-1">
+            <div class="row">
     
                 <div class="col-4 jumbotron p-1 mx-1">
-                    <h4 class="sensor1"> Humidity: </h4>
-                    <h4 class="sensor3">Temparature:</h4>
+                    <h5 class="sensor1"> Humidity: </h5>
+                    <h5 class="sensor3">Temparature:</h5>
                 </div>
-            
-    <br>
                 <div class="col-4 jumbotron p-1 mx-1">
                     <h4 class="sensor2">CPM:</h4>
                     <h4 class="sensor4">nSv :</h4>
                 </div>
                 <br>
                 <div class="col-4 jumbotron p-1 mx-1">
-                    <h4 class="sensor5">Sensor :</h4>
-                    <h4 class="sensor6">Sensor :</h4>
+                    <h4 class="sensor5">H2S :</h4>
+                    <h4 class="sensor6">CO :</h4>
                 </div>
                 <br>
-                <div class="col-4 jumbotron p-1 mx-1">
+                <div class="col-5 jumbotron p-1 mx-1">
                     <h4 class="sensor7">Data aqusition:</h4>
-                    <div>
+                    <div class ="flex-container">
                     <div class="led-box ml-5">
                         <div class="led-green"></div>
                       </div>
@@ -116,14 +114,11 @@
                       </div>
                     </div>
                 </div>
-                
-               
-            
             </div>
         </div>
         <div id="map"></div>
     </div>
-    </div>
+    <!-- </div> -->
 </div>
 </body>
 <script>
@@ -137,13 +132,13 @@
                 success: function (response) {
                     console.log(response);
                     $(".sensor1").text("");
-                     $(".sensor1").text("Humidity : " +  Math.round(response.humidity) );
+                     $(".sensor1").text("Humidity : " + response.humidity );
 
                     $(".sensor2").text("");
                      $(".sensor2").text("CPM : " +  Math.round(response.cpm) );
 
                     $(".sensor3").text("");
-                    $(".sensor3").text("Temparature : " +  Math.round(response.temparature) );
+                    $(".sensor3").text("Temparature : " +response.temparature );
 
                     $(".sensor4").text("");
                     $(".sensor4").text("nSV : " +  Math.round(response.nSv) );
@@ -166,7 +161,7 @@
                     
              }
             });
-        }, 1000);
+        }, 2000);
     });
 </script>
 <!-- <script>
